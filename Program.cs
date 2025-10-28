@@ -16,7 +16,7 @@ do
     Console.WriteLine("2: Add blog");
     Console.WriteLine("3: Create post");
     Console.WriteLine("4: See posts");
-    Console.WriteLine("5: Exit"); // Added exit option so program can stop
+    Console.WriteLine("5: Exit");
     string? input = Console.ReadLine();
 
     switch (input)
@@ -28,7 +28,7 @@ do
             Console.WriteLine("All blogs in the database:");
             foreach (var item in query)
             {
-                Console.WriteLine(item.Name);
+                Console.WriteLine($"{item.BlogId}: {item.Name}");
             }
             break;
 
@@ -43,8 +43,7 @@ do
             logger.Info("Blog added - {name}", name);
             break;
 
-    case "3":
-            // Create and save a new Post
+        case "3":
             Console.WriteLine("What blog will this post be added to? Enter the blog Id: ");
             int userBlogChoice;
 
@@ -62,7 +61,6 @@ do
             else
             {
                 var post = new Post { BlogId = userBlogChoice };
-                // Create new post
                 Console.Write("Enter a title for a new Post: ");
                 post.Title = Console.ReadLine();
 
@@ -75,20 +73,55 @@ do
                 logger.Info("Post blog Id - {blogId}", userBlogChoice);
             }
             break;
-            break;
 
         case "4":
-            // See posts
-            var query2 = db.Posts.OrderBy(b => b.Title);
+            var blogs = db.Blogs.OrderBy(b => b.Name).ToList();
 
-            Console.WriteLine("All posts in the database:");
-            foreach (var item in query2)
+            if (blogs.Count == 0)
             {
-                Console.WriteLine($"Title: {item.Title}");
-                Console.WriteLine($"Content: {item.Content}");
-                Console.WriteLine($"BlogId: {item.BlogId}");
-                Console.WriteLine("-------------------");
+                Console.WriteLine("No blogs found.");
+                break;
             }
+
+            Console.WriteLine("Select the Blog whose posts you want to view:");
+            foreach (var b in blogs)
+            {
+                Console.WriteLine($"{b.BlogId}: {b.Name}");
+            }
+
+            int blogChoice;
+            while (!int.TryParse(Console.ReadLine(), out blogChoice) || !blogs.Any(b => b.BlogId == blogChoice))
+            {
+                Console.WriteLine("Invalid blog Id. Please enter one from the list above:");
+            }
+
+            var chosenBlog = db.Blogs.Find(blogChoice);
+            var blogPosts = db.Posts.Where(p => p.BlogId == blogChoice).OrderBy(p => p.Title).ToList();
+
+            if (chosenBlog == null)
+            {
+                Console.WriteLine("Selected blog not found.");
+                break;
+            }
+            
+            Console.WriteLine($"In {chosenBlog.Name} there are {blogPosts.Count} posts.\n");
+
+            if (blogPosts.Count == 0)
+            {
+                Console.WriteLine("No posts found for this blog.");
+            }
+            else
+            {
+                foreach (var post in blogPosts)
+                {
+                    Console.WriteLine($"Blog: {chosenBlog.Name}");
+                    Console.WriteLine($"Title: {post.Title}");
+                    Console.WriteLine($"Content: {post.Content}");
+                    Console.WriteLine("-------------------");
+                }
+            }
+
+            logger.Info("Viewed posts for BlogId {blogId} - {blogName}", chosenBlog.BlogId, chosenBlog.Name);
             break;
 
         case "5":
@@ -101,4 +134,5 @@ do
     }
 
 } while (on);
+
 logger.Info("Program ended");
