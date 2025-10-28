@@ -45,7 +45,36 @@ do
 
     case "3":
             // Create and save a new Post
+            Console.WriteLine("What blog will this post be added to? Enter the blog Id: ");
+            int userBlogChoice;
 
+            while (!int.TryParse(Console.ReadLine(), out userBlogChoice) || userBlogChoice <= 0)
+            {
+                Console.WriteLine("Invalid input. Please enter a valid blog Id: ");
+            }
+
+            var selectedBlog = db.Blogs.Find(userBlogChoice);
+
+            if (selectedBlog == null)
+            {
+                Console.WriteLine("That blog Id does not exist.");
+            }
+            else
+            {
+                var post = new Post { BlogId = userBlogChoice };
+                // Create new post
+                Console.Write("Enter a title for a new Post: ");
+                post.Title = Console.ReadLine();
+
+                Console.Write("Enter content for a new Post: ");
+                post.Content = Console.ReadLine();
+
+                db.AddPost(post);
+                logger.Info("Post added - {title}", post.Title);
+                logger.Info("Post content - {content}", post.Content);
+                logger.Info("Post blog Id - {blogId}", userBlogChoice);
+            }
+            break;
             break;
 
         case "4":
