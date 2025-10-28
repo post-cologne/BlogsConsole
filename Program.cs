@@ -16,16 +16,16 @@ do
     Console.WriteLine("2: Add blog");
     Console.WriteLine("3: Create post");
     Console.WriteLine("4: See posts");
-    Console.WriteLine("5: Exit");
-    string? input = Console.ReadLine();
+    Console.WriteLine("Enter q to quit");
+    string? input = Console.ReadLine()?.ToLower();
 
     switch (input)
     {
         case "1":
             // Display all Blogs from the database
-            var query = db.Blogs.OrderBy(b => b.Name);
+            var query = db.Blogs.OrderBy(b => b.BlogId);
 
-            Console.WriteLine("All blogs in the database:");
+            Console.WriteLine("Option 1 selected.\nDisplaying all blogs in the database:");
             foreach (var item in query)
             {
                 Console.WriteLine($"{item.BlogId}: {item.Name}");
@@ -34,7 +34,7 @@ do
 
         case "2":
             // Create and save a new Blog
-            Console.Write("Enter a name for a new Blog: ");
+            Console.Write("Option 2 selected.\nEnter a name for a new Blog: ");
             var name = Console.ReadLine();
 
             var blog = new Blog { Name = name };
@@ -44,7 +44,7 @@ do
             break;
 
         case "3":
-            Console.WriteLine("What blog will this post be added to? Enter the blog Id: ");
+            Console.WriteLine("Option 3 selected\nWhat blog will this post be added to? Enter the blog Id: ");
             int userBlogChoice;
 
             while (!int.TryParse(Console.ReadLine(), out userBlogChoice) || userBlogChoice <= 0)
@@ -76,7 +76,7 @@ do
 
         case "4":
             var blogs = db.Blogs.OrderBy(b => b.Name).ToList();
-
+            Console.WriteLine("Option 4 selected.\nDisplaying all blogs to choose from:");
             if (blogs.Count == 0)
             {
                 Console.WriteLine("No blogs found.");
@@ -124,7 +124,8 @@ do
             logger.Info("Viewed posts for BlogId {blogId} - {blogName}", chosenBlog.BlogId, chosenBlog.Name);
             break;
 
-        case "5":
+        case "q":
+            Console.WriteLine("Option q selected.\nExiting program.");
             on = false;
             break;
 
