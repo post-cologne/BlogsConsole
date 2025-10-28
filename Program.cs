@@ -50,7 +50,17 @@ do
 
         case "4":
             // See posts
+            var query2 = db.Posts.OrderBy(b => b.Title);
 
+            Console.WriteLine("All posts in the database:");
+            foreach (var item in query2)
+            {
+                Console.WriteLine($"Title: {item.Title}");
+                Console.WriteLine($"Content: {item.Content}");
+                Console.WriteLine($"BlogId: {item.BlogId}");
+                Console.WriteLine("-------------------");
+            }
+            break;
 
         case "5":
             on = false;
