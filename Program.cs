@@ -76,7 +76,8 @@ do
 
         case "4":
             var blogs = db.Blogs.OrderBy(b => b.Name).ToList();
-            Console.WriteLine("Option 4 selected.\nDisplaying all blogs to choose from:");
+            blogs.Sort((a, b) => a.BlogId - b.BlogId);
+            Console.WriteLine("Option 4 selected");
             if (blogs.Count == 0)
             {
                 Console.WriteLine("No blogs found.");
@@ -84,6 +85,7 @@ do
             }
 
             Console.WriteLine("Select the Blog whose posts you want to view:");
+            blogs.Sort((a, b) => a.BlogId - b.BlogId);
             foreach (var b in blogs)
             {
                 Console.WriteLine($"{b.BlogId}: {b.Name}");
@@ -103,8 +105,11 @@ do
                 Console.WriteLine("Selected blog not found.");
                 break;
             }
-            
-            Console.WriteLine($"In {chosenBlog.Name} there are {blogPosts.Count} posts.\n");
+            if (blogPosts.Count != 0)
+            {
+
+                Console.WriteLine($"\nIn {chosenBlog.Name} there are {blogPosts.Count} posts.\n");
+            }
 
             if (blogPosts.Count == 0)
             {
@@ -114,14 +119,12 @@ do
             {
                 foreach (var post in blogPosts)
                 {
-                    Console.WriteLine($"Blog: {chosenBlog.Name}");
-                    Console.WriteLine($"Title: {post.Title}");
+                    Console.WriteLine($"Blog Title: {chosenBlog.Name}");
+                    Console.WriteLine($"Post Title: {post.Title}");
                     Console.WriteLine($"Content: {post.Content}");
                     Console.WriteLine("-------------------");
                 }
             }
-
-            logger.Info("Viewed posts for BlogId {blogId} - {blogName}", chosenBlog.BlogId, chosenBlog.Name);
             break;
 
         case "q":
